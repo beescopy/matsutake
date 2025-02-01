@@ -61,7 +61,7 @@ const game = {
 	debug: false,
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
-	bury: { time: 0, glitch: 0, y: 0, opacity: 0},
+	bury: { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 1, docs: [1], chosenDocs: []},
 	ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 101, 99, 97, 95, 93, 90, 89, 89, 89, 89, 90, 92, 93, 96, 98, 101, 104, 104, 104, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103]
 }
 const ranDrawState = new Map()
@@ -291,7 +291,7 @@ function drawBury(deltaTime) {
 		drawScaled(ctx, game.img["desk2"], 0, 0)
 	}
 
-	if(game.bury.glitch != 0 && chance(5, deltaTime))
+	if(game.bury.glitch != 0 && chance(5, deltaTime) && game.bury.glitch <= 20)
 		game.bury.glitch = Math.min(game.bury.glitch + 1, 20)
 
     ctx.globalCompositeOperation = "overlay"
@@ -321,9 +321,10 @@ function drawBury(deltaTime) {
 
     ctx.globalCompositeOperation = "source-over"
 	if(game.bury.glitch == 20)
-        drawScaled(ctx, game.img["doc-01"], 0, game.bury.y)
-
-
+        game.bury.showDocs = true
+    if(game.bury.showDocs) {
+        drawScaled(ctx, game.img["doc-"+String(randomDraw(game.bury.docs)).padStart(2, '0')], 0, game.bury.y)
+    }
 }
 
 
