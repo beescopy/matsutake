@@ -26,6 +26,7 @@ body {
 
 #c {
 	width: 100%;
+	max-height: 100%;
 	background: transparent;
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
@@ -37,12 +38,23 @@ body {
 
 <body>
 
+<script src="tween.js"></script>
+<script src="controls.js"></script>
 <script type="text/javascript">
 
-const game = { currentView: "social", tweens: [], spritesLoaded: false, debug: false }
+const game = {
+	currentView: "burn",
+	tweens: [],
+	spritesLoaded: false,
+	debug: false,
+	player: { x: 90, y: 96, vspeed: 0, movingLeft: false, movingRight: false },
+	burn: { glitch: 0, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70 },
+	ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102]
+}
 const ranDrawState = new Map()
 var canvas
 var ctx
+var prevTime
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
@@ -66,14 +78,13 @@ function init(){
 	prevTime = new Date().getTime()
 
 	game.img = { }
-	/*game.controls = new Controls()
-	game.debug = false
+	game.controls = new Controls()
 
 	document.addEventListener('keydown', game.controls.keyDownListener);
 	document.addEventListener('keyup', game.controls.keyUpListener);
 	document.addEventListener('keypress', game.controls.keyPressListener);
 
-	document.addEventListener('mousedown', function(e) {
+	/*document.addEventListener('mousedown', function(e) {
 		if(!game.controls.isTouch && e.button == 0)
 			game.controls.pressHandler(e.clientX, e.clientY, "mouse");
 	}, true);
@@ -105,7 +116,7 @@ function init(){
 		for(var i = 0; i < e.changedTouches.length; i++)
 			game.controls.pressHandler(e.changedTouches[i].clientX, e.changedTouches[i].clientY, e.changedTouches[i].identifier)
 		e.preventDefault();
-	}, true);
+	}, true);*/
 
 	// Explicitly set passive to false if supported to disable FF/Chrome scroll optimizations
 	var passiveIfSupported = true;
@@ -114,7 +125,7 @@ function init(){
 			passiveIfSupported = { passive: false };
 		} }));
 	}
-	catch(err) {}*/
+	catch(err) {}
 
 	// Kind of prevents unintentional zooming on mobile Safari
 	document.addEventListener('gesturestart', function(e) {
@@ -126,32 +137,78 @@ function init(){
 		load("img/stars.png", "stars"),
 		load("img/hills.png", "hills"),
 		load("img/sky.png", "sky"),
+		load("img/powerline.png", "powerline"),
+		load("img/txt-move.png", "tut-move"),
+		load("img/txt-cut.png", "tut-cut"),
+		load("img/player.png", "player"),
 	]
 
 	Promise.all(promises).then(function() {
 		console.log("imgs loaded")
 		game.spritesLoaded = true;
+		spritesLoaded()
 	});
 
 	tick()
 }
 
 function tick() {
+	// Calculate time since last frame
+	var deltaTime =  +new Date - prevTime;
+	prevTime = +new Date;
+
+	// Tick all tweens
+	for(var i = 0; i < game.tweens.length; i++){
+		game.tweens[i].tick(deltaTime);
+	}
+
+	if(game.player.moving) {
+		if(game.player.movingLeft)
+			game.player.x -= 1
+		else
+			game.player.x += 1
+	}
+
+	game.player.y += game.player.vspeed * deltaTime * 0.1
+	game.player.vspeed += 0.1
+	game.player.y = Math.min(game.player.y, game.ground[Math.floor(game.player.x)])
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	drawBurn()
 	requestAnimationFrame(tick)
+}
+
+function spritesLoaded() {
+	game.tweens.push(createjs.Tween.get(game.burn).to({opacity: 1}, 4000, createjs.Ease.cubicOut));
+	game.tweens.push(createjs.Tween.get(game.burn).to({y: 0}, 2000, createjs.Ease.cubicOut));
+
+	game.tweens.push(createjs.Tween.get(game.burn, {loop:true}).to({starCycle: 100}, 1000, createjs.Ease.circInOut).to({starCycle: 70}, 800, createjs.Ease.circInOut));
 }
 
 function drawBurn() {
 	if(!game.spritesLoaded)
 		return
 	drawScaled(ctx, game.img["sky"], 0, 0)
-	drawScaled(ctx, game.img["stars"], 0, 0)
-	drawScaled(ctx, game.img["hills"], 0, 0)
 
-	CanvasRenderingContext2D.globalCompositeOperation = "overlay"
-	drawScaled(ctx, game.img["burn"], 0, 0)
-	CanvasRenderingContext2D.globalCompositeOperation = "source-over"
+	ctx.globalAlpha = game.burn.starOpacity * (game.burn.starCycle / 100)
+	drawScaled(ctx, game.img["stars"], 0, 0)
+	ctx.globalAlpha = 1
+
+	drawScaled(ctx, game.img["hills"], 0, 0)
+	drawScaled(ctx, game.img["powerline"], 0, 0)
+
+	ctx.globalCompositeOperation = "overlay"
+	ctx.globalAlpha = game.burn.opacity;
+	drawScaled(ctx, game.img["burn"], 0, game.burn.y)
+	ctx.globalAlpha = 1;
+	ctx.globalCompositeOperation = "source-over"
+
+	drawScaled(ctx, game.img["player"], game.player.x, game.player.y)
+	drawScaled(ctx, game.img["tut-move"], 0, 0)
+}
+
+function cut() {
+	game.tweens.push(createjs.Tween.get(game.burn).to({starOpacity: 1}, 2000, createjs.Ease.cubicInOut));
 }
 
 function drawScaled(ctx, img, sx, sy){
@@ -185,7 +242,7 @@ function layout(){
 	ctx = canvas.getContext("2d")
 
 	canvas.width = 250;
-	canvas.height = 120;
+	canvas.height = 125;
 }
 
 window.onresize = function(event) {
