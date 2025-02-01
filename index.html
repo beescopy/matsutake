@@ -61,7 +61,7 @@ const game = {
 	debug: false,
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
-	bury: { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 1, docs: [1], chosenDocs: []},
+	bury: { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1], chosenDocs: []},
 	ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 101, 99, 97, 95, 93, 90, 89, 89, 89, 89, 90, 92, 93, 96, 98, 101, 104, 104, 104, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103]
 }
 const ranDrawState = new Map()
@@ -161,19 +161,20 @@ function init(){
 		load("img/txt-move.png", "tut-move"),
 		load("img/txt-cut.png", "tut-cut"),
 		load("img/player.png", "player"),
-        load("img/player-left.png", "player-left"),
-        load("img/desk-01.png", "desk1"),
-        load("img/desk-02.png", "desk2"),
-        load("img/txt-bury-01.png", "bury-g01"),
-        load("img/txt-bury-02.png", "bury-g02"),
-        load("img/txt-bury-03.png", "bury-g03"),
-        load("img/txt-bury-04.png", "bury-g04"),
-        load("img/txt-bury-05.png", "bury-g05"),
-        load("img/txt-bury-06.png", "bury-g06"),
-        load("img/txt-bury-07.png", "bury-g07"),
-        load("img/txt-bury-08.png", "bury-g08"),
-        load("img/txt-bury-09.png", "bury-g09"),
-        load("img/txt-bury-10.png", "bury-g10"),
+    load("img/player-left.png", "player-left"),
+    load("img/desk-01.png", "desk1"),
+    load("img/desk-02.png", "desk2"),
+    load("img/txt-bury-01.png", "bury-g01"),
+    load("img/txt-bury-02.png", "bury-g02"),
+    load("img/txt-bury-03.png", "bury-g03"),
+    load("img/txt-bury-04.png", "bury-g04"),
+    load("img/txt-bury-05.png", "bury-g05"),
+    load("img/txt-bury-06.png", "bury-g06"),
+    load("img/txt-bury-07.png", "bury-g07"),
+    load("img/txt-bury-08.png", "bury-g08"),
+    load("img/txt-bury-09.png", "bury-g09"),
+    load("img/txt-bury-10.png", "bury-g10"),
+    load("img/doc-init.png", "doc-00"),
 		load("img/doc-01.png", "doc-01"),
 	]
 
@@ -323,7 +324,8 @@ function drawBury(deltaTime) {
 	if(game.bury.glitch == 20)
         game.bury.showDocs = true
     if(game.bury.showDocs) {
-        drawScaled(ctx, game.img["doc-"+String(randomDraw(game.bury.docs)).padStart(2, '0')], 0, game.bury.y)
+    		drawScaled(ctx, game.img["doc-00"], 0, game.bury.y)
+        //drawScaled(ctx, game.img["doc-"+String(randomDraw(game.bury.docs)).padStart(2, '0')], 0, game.bury.y)
     }
 }
 
@@ -340,13 +342,13 @@ function cut() {
     window.setTimeout(function(){ say("bury") }, 1000)
     window.setTimeout(function(){ startBury() }, 5000)
 
-    window.setTimeout(function(){game.tweens.push(createjs.Tween.get(game.burn).to({yOffset: -125}, 2000, createjs.Ease.linearGradient)) }, 3000);
+    window.setTimeout(function(){game.tweens.push(createjs.Tween.get(game.burn).to({yOffset: -125}, 2000, createjs.Ease.cubicIn)) }, 3000);
 }
 
 function startBury(){
     window.setTimeout(function(){ game.currentView = "bury" }, 0)
     game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut));
-    window.setTimeout(function(){ game.bury.glitch = 1 }, 2200)
+    window.setTimeout(function(){ game.bury.glitch = 1 }, 3500)
 
 }
 
