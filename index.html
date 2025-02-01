@@ -60,10 +60,10 @@ window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequest
 
 window.addEventListener("load", function() {
 	init()
-	
+
 
 	document.getElementById("pressplay").addEventListener("click", function() {
-		var myAudio = new Audio('soundtrack.opus'); 
+		var myAudio = new Audio('soundtrack.opus');
 		myAudio.addEventListener('ended', function() {
 		    this.currentTime = 0;
 		    this.play();
@@ -131,7 +131,7 @@ function init(){
 	document.addEventListener('gesturestart', function(e) {
 		e.preventDefault();
 	});
-	
+
 	promises = [
 		load("img/txt-burn-01.png", "burn"),
 		load("img/txt-burn-02.png", "burn-g1"),
@@ -146,7 +146,8 @@ function init(){
 		load("img/txt-move.png", "tut-move"),
 		load("img/txt-cut.png", "tut-cut"),
 		load("img/player.png", "player"),
-		load("img/player-left.png", "player-left"),
+        load("img/player-left.png", "player-left"),
+		load("img/desk.png", "desk"),
 	]
 
 	Promise.all(promises).then(function() {
@@ -182,7 +183,8 @@ function tick() {
 	game.player.y = Math.min(game.player.y, game.ground[Math.floor(game.player.x)])
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	drawBurn(deltaTime)
+    drawBurn(deltaTime)
+	//drawBury(deltaTime)
 	requestAnimationFrame(tick)
 }
 
@@ -199,7 +201,7 @@ function drawBurn(deltaTime) {
 
 	game.burn.time = (game.burn.time + deltaTime) % 5000
 	const powerlineFrame = Math.floor(game.burn.time / 750) % 2
-	
+
 	if(game.burn.glitch == 0 && chance(20, deltaTime))
 		game.burn.glitch = Math.floor(Math.random()*4)
 	else if(game.burn.glitch != 0 && chance(15, deltaTime))
@@ -245,6 +247,18 @@ function drawBurn(deltaTime) {
 	drawScaled(ctx, game.img["tut-cut"], 0, 0)
 	ctx.globalAlpha = 1
 }
+
+
+function drawBury(deltaTime) {
+	if(!game.spritesLoaded)
+		return
+
+	drawScaled(ctx, game.img["desk"], 0, 0)
+
+
+}
+
+
 
 function cut() {
 	if(Math.abs(game.player.x - 120) > 5)
@@ -350,5 +364,3 @@ function randomDraw(array) {
 
 </body>
 </html>
-
-
