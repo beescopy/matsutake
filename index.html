@@ -54,13 +54,14 @@ body {
 <script type="text/javascript">
 
 const game = {
+    music: false,
 	currentView: "burn",
 	tweens: [],
 	spritesLoaded: false,
 	debug: false,
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
-    burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0 },
-	bury: { time: 0, glitch: 1, y: 0 },
+    burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
+	bury: { time: 0, glitch: 0, y: 0, opacity: 0},
 	ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 101, 99, 97, 95, 93, 90, 89, 89, 89, 89, 90, 92, 93, 96, 98, 101, 104, 104, 104, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103]
 }
 const ranDrawState = new Map()
@@ -75,12 +76,13 @@ window.addEventListener("load", function() {
 
 
 	document.getElementById("pressplay").addEventListener("click", function() {
-		var myAudio = new Audio('soundtrack.opus');
-		myAudio.addEventListener('ended', function() {
+		game.music = new Audio('aud/burn-bg.mp3');
+        game.music.volume = 1;
+		game.music.addEventListener('ended', function() {
 		    this.currentTime = 0;
 		    this.play();
 		}, false);
-		myAudio.play();
+		game.music.play();
 		document.getElementById("pressplay").style.display = "none"
 		window.setTimeout(function(){ say("burn") }, 1000)
 	})
@@ -171,7 +173,8 @@ function init(){
         load("img/txt-bury-07.png", "bury-g07"),
         load("img/txt-bury-08.png", "bury-g08"),
         load("img/txt-bury-09.png", "bury-g09"),
-		load("img/txt-bury-10.png", "bury-g10"),
+        load("img/txt-bury-10.png", "bury-g10"),
+		load("img/doc-01.png", "doc-01"),
 	]
 
 	Promise.all(promises).then(function() {
@@ -207,8 +210,11 @@ function tick() {
 	game.player.y = Math.min(game.player.y, game.ground[Math.floor(game.player.x)])
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //drawBurn(deltaTime)
-	drawBury(deltaTime)
+    if (game.currentView == "burn") {
+        drawBurn(deltaTime)
+    } else if (game.currentView == "bury") {
+        drawBury(deltaTime)
+    }
 	requestAnimationFrame(tick)
 }
 
@@ -233,42 +239,42 @@ function drawBurn(deltaTime) {
 	else if(game.burn.glitch != 0 && chance(7, deltaTime))
 		game.burn.glitch = 1 + Math.floor(Math.random()*3)
 
-	drawScaled(ctx, game.img["sky"], 0, 0)
+	drawScaled(ctx, game.img["sky"], 0, game.burn.yOffset)
 
 	ctx.globalAlpha = game.burn.starOpacity * (game.burn.starCycle / 100)
-	drawScaled(ctx, game.img["stars"], 0, 0)
+	drawScaled(ctx, game.img["stars"], 0, game.burn.yOffset)
 	ctx.globalAlpha = 1
 
-	drawScaled(ctx, game.img["hills"], 0, 0)
+    drawScaled(ctx, game.img["hills"], 0, game.burn.yOffset)
 
 	if(game.burn.cut)
-		drawScaled(ctx, game.img["powerline-cut"], 0, 0)
+		drawScaled(ctx, game.img["powerline-cut"], 0, game.burn.yOffset)
 	else if(powerlineFrame == 0){
-		drawScaled(ctx, game.img["powerline1"], 0, 0)
+		drawScaled(ctx, game.img["powerline1"], 0, game.burn.yOffset)
 	}
 	else {
-		drawScaled(ctx, game.img["powerline2"], 0, 0)
+		drawScaled(ctx, game.img["powerline2"], 0, game.burn.yOffset)
 	}
 
 	ctx.globalCompositeOperation = "overlay"
 	ctx.globalAlpha = game.burn.opacity;
 	if(game.burn.glitch == 0)
-		drawScaled(ctx, game.img["burn"], 0, game.burn.y)
+		drawScaled(ctx, game.img["burn"], 0, game.burn.y + game.burn.yOffset)
 	else if(game.burn.glitch == 1)
-		drawScaled(ctx, game.img["burn-g1"], 0, game.burn.y)
+		drawScaled(ctx, game.img["burn-g1"], 0, game.burn.y + game.burn.yOffset)
 	else if(game.burn.glitch == 2)
-		drawScaled(ctx, game.img["burn-g2"], 0, game.burn.y)
+		drawScaled(ctx, game.img["burn-g2"], 0, game.burn.y + game.burn.yOffset)
 	else if(game.burn.glitch == 3)
-		drawScaled(ctx, game.img["burn-g3"], 0, game.burn.y)
+		drawScaled(ctx, game.img["burn-g3"], 0, game.burn.y + game.burn.yOffset)
 	ctx.globalAlpha = 1;
 	ctx.globalCompositeOperation = "source-over"
 
-	drawScaled(ctx, game.player.movingLeft ? game.img["player-left"] : game.img["player"], Math.round(game.player.x), Math.round(game.player.y))
+	drawScaled(ctx, game.player.movingLeft ? game.img["player-left"] : game.img["player"], Math.round(game.player.x), Math.round(game.player.y) + game.burn.yOffset)
 
 	ctx.globalAlpha = game.burn.moveOpacity
-	drawScaled(ctx, game.img["tut-move"], 0, 0)
+	drawScaled(ctx, game.img["tut-move"], 0, game.burn.yOffset)
 	ctx.globalAlpha = game.burn.cutOpacity
-	drawScaled(ctx, game.img["tut-cut"], 0, 0)
+	drawScaled(ctx, game.img["tut-cut"], 0, game.burn.yOffset)
 	ctx.globalAlpha = 1
 }
 
@@ -276,6 +282,7 @@ function drawBurn(deltaTime) {
 function drawBury(deltaTime) {
 	if(!game.spritesLoaded)
 		return
+    ctx.globalAlpha = game.bury.opacity;
     game.bury.time = (game.bury.time + deltaTime) % 5000
 	const deskFrame = Math.floor(game.bury.time / 750) % 2
     if(deskFrame == 0){
@@ -285,7 +292,9 @@ function drawBury(deltaTime) {
 	}
 
 	if(game.bury.glitch != 0 && chance(5, deltaTime))
-		game.bury.glitch = Math.min(game.bury.glitch + 1, 10)
+		game.bury.glitch = Math.min(game.bury.glitch + 1, 20)
+
+    ctx.globalCompositeOperation = "overlay"
 
 	if(game.bury.glitch == 0)
 		drawScaled(ctx, game.img["bury-g01"], 0, game.bury.y)
@@ -310,18 +319,34 @@ function drawBury(deltaTime) {
 	else if(game.bury.glitch == 10)
 		drawScaled(ctx, game.img["bury-g10"], 0, game.bury.y)
 
+    ctx.globalCompositeOperation = "source-over"
+	if(game.bury.glitch == 20)
+        drawScaled(ctx, game.img["doc-01"], 0, game.bury.y)
+
+
 }
 
 
 
 function cut() {
-	if(Math.abs(game.player.x - 120) > 5)
+	if(Math.abs(game.player.x - 120) > 5 || game.burn.cut)
 		return
 
 	game.tweens.push(createjs.Tween.get(game.burn).to({starOpacity: 1}, 2000, createjs.Ease.cubicInOut));
 	game.burn.cut = true
 
-	window.setTimeout(function(){ say("bury") }, 750)
+    game.music.pause();
+    window.setTimeout(function(){ say("bury") }, 1000)
+    window.setTimeout(function(){ startBury() }, 5000)
+
+    window.setTimeout(function(){game.tweens.push(createjs.Tween.get(game.burn).to({yOffset: -125}, 2000, createjs.Ease.linearGradient)) }, 3000);
+}
+
+function startBury(){
+    window.setTimeout(function(){ game.currentView = "bury" }, 0)
+    game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut));
+    window.setTimeout(function(){ game.bury.glitch = 1 }, 2200)
+
 }
 
 function firstmove() {
@@ -331,6 +356,7 @@ function firstmove() {
 
 function say(line) {
 	var myAudio = new Audio(`aud/${line}-tts.mp3`);
+    myAudio.volume = 0.5;
 	myAudio.play();
 }
 
@@ -416,8 +442,8 @@ function randomDraw(array) {
 
 
 </script>
-
-<div id="pressplay" style="display: none;">
+<!-- style="display: none;" -->
+<div id="pressplay" >
 	<svg xmlns="http://www.w3.org/2000/svg" width="8rem" height="8rem" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-3 17v-10l9 5.146-9 4.854z" fill="#fff"/></svg>
 </div>
 
