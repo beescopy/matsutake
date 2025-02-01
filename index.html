@@ -48,7 +48,8 @@ const game = {
 	spritesLoaded: false,
 	debug: false,
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
-	burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0 },
+    burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0 },
+	bury: { time: 0, glitch: 0 },
 	ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 101, 99, 97, 95, 93, 90, 89, 89, 89, 89, 90, 92, 93, 96, 98, 101, 104, 104, 104, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103]
 }
 const ranDrawState = new Map()
@@ -147,7 +148,8 @@ function init(){
 		load("img/txt-cut.png", "tut-cut"),
 		load("img/player.png", "player"),
         load("img/player-left.png", "player-left"),
-        load("img/desk.png", "desk"),
+        load("img/desk-01.png", "desk1"),
+        load("img/desk-02.png", "desk2"),
 		load("img/txt-bury-01.png", "bury"),
 	]
 
@@ -253,9 +255,14 @@ function drawBurn(deltaTime) {
 function drawBury(deltaTime) {
 	if(!game.spritesLoaded)
 		return
-
-	drawScaled(ctx, game.img["bury"], 0, 0)
-
+    game.bury.time = (game.bury.time + deltaTime) % 5000
+	const deskFrame = Math.floor(game.bury.time / 750) % 2
+    if(deskFrame == 0){
+		drawScaled(ctx, game.img["desk1"], 0, 0)
+	} else {
+		drawScaled(ctx, game.img["desk2"], 0, 0)
+	}
+    drawScaled(ctx, game.img["bury"], 0, 0)
 
 }
 
