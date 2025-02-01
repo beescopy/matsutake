@@ -3,6 +3,7 @@ class Controls {
 		this.touchData = {};
 		this.isTouch = false;
 		this.pressedKeys = new Set()
+		this.moved = false
 	}
 
 	mute() {
@@ -59,15 +60,26 @@ class Controls {
 		}
 		// move right pressed
 		else if(evt.keyCode == 39 || evt.keyCode == 68) {
+			if(!this.moved) {
+				this.moved = true
+				firstmove()
+			}
 			game.player.movingLeft = false
 			game.player.moving = true
 		}
 		else if(evt.keyCode == 37 || evt.keyCode == 65) {
+			if(!this.moved) {
+				this.moved = true
+				firstmove()
+			}
 			game.player.movingLeft = true
 			game.player.moving = true
 		}
 		else if(evt.keyCode == 38 || evt.keyCode == 87) {
 			game.player.vspeed = -1
+		}
+		else if(evt.keyCode == 88 ) {
+			cut()
 		}
 		else {
 			console.log(evt.keyCode)
