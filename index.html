@@ -21,7 +21,7 @@ body, html{
 }
 
 body {
-	background: #1a1f30;
+	background: #000;
 }
 
 #c {
@@ -31,6 +31,17 @@ body {
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 	object-fit: contain;
+}
+
+#pressplay {
+	position: absolute;
+	backdrop-filter: blur(20px);
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
 }
 
 </style>
@@ -70,6 +81,7 @@ window.addEventListener("load", function() {
 		}, false);
 		myAudio.play();
 		document.getElementById("pressplay").style.display = "none"
+		window.setTimeout(function(){ say("burn") }, 1000)
 	})
 })
 
@@ -266,11 +278,18 @@ function cut() {
 
 	game.tweens.push(createjs.Tween.get(game.burn).to({starOpacity: 1}, 2000, createjs.Ease.cubicInOut));
 	game.burn.cut = true
+
+	window.setTimeout(function(){ say("bury") }, 750)
 }
 
 function firstmove() {
-	game.tweens.push(createjs.Tween.get(game.burn).to({moveOpacity: 0}, 4000, createjs.Ease.cubicIn));
-	game.tweens.push(createjs.Tween.get(game.burn).wait(6000).to({cutOpacity: 1}, 3000, createjs.Ease.cubicOut).wait(5000).to({cutOpacity: 0}, 4000, createjs.Ease.cubicIn));
+	game.tweens.push(createjs.Tween.get(game.burn).to({moveOpacity: 0}, 2000, createjs.Ease.cubicIn));
+	game.tweens.push(createjs.Tween.get(game.burn).wait(4000).to({cutOpacity: 1}, 3000, createjs.Ease.cubicOut).wait(3000).to({cutOpacity: 0}, 4000, createjs.Ease.cubicIn));
+}
+
+function say(line) {
+	var myAudio = new Audio(`aud/${line}-tts.mp3`); 
+	myAudio.play();
 }
 
 function drawScaled(ctx, img, sx, sy){
@@ -356,7 +375,7 @@ function randomDraw(array) {
 
 </script>
 
-<div id="pressplay" style="display: none;">
+<div id="pressplay">
 	<svg xmlns="http://www.w3.org/2000/svg" width="8rem" height="8rem" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-3 17v-10l9 5.146-9 4.854z" fill="#fff"/></svg>
 </div>
 
