@@ -25,10 +25,11 @@ body {
 }
 
 #c {
-	width: 500px;
-	background: #ff0000;
+	width: 100%;
+	background: transparent;
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
+	object-fit: contain;
 }
 
 </style>
@@ -38,7 +39,7 @@ body {
 
 <script type="text/javascript">
 
-const game = { currentView: "social", tweens: [], spritesLoaded: false, debug: true }
+const game = { currentView: "social", tweens: [], spritesLoaded: false, debug: false }
 const ranDrawState = new Map()
 var canvas
 var ctx
@@ -122,6 +123,9 @@ function init(){
 	
 	promises = [
 		load("img/txt-burn.png", "burn"),
+		load("img/stars.png", "stars"),
+		load("img/hills.png", "hills"),
+		load("img/sky.png", "sky"),
 	]
 
 	Promise.all(promises).then(function() {
@@ -141,8 +145,13 @@ function tick() {
 function drawBurn() {
 	if(!game.spritesLoaded)
 		return
+	drawScaled(ctx, game.img["sky"], 0, 0)
+	drawScaled(ctx, game.img["stars"], 0, 0)
+	drawScaled(ctx, game.img["hills"], 0, 0)
 
+	CanvasRenderingContext2D.globalCompositeOperation = "overlay"
 	drawScaled(ctx, game.img["burn"], 0, 0)
+	CanvasRenderingContext2D.globalCompositeOperation = "source-over"
 }
 
 function drawScaled(ctx, img, sx, sy){
