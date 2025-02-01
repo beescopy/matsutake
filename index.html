@@ -159,7 +159,8 @@ function init(){
 		load("img/txt-cut.png", "tut-cut"),
 		load("img/player.png", "player"),
         load("img/player-left.png", "player-left"),
-		load("img/desk.png", "desk"),
+        load("img/desk.png", "desk"),
+		load("img/txt-bury-01.png", "bury"),
 	]
 
 	Promise.all(promises).then(function() {
@@ -195,8 +196,8 @@ function tick() {
 	game.player.y = Math.min(game.player.y, game.ground[Math.floor(game.player.x)])
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBurn(deltaTime)
-	//drawBury(deltaTime)
+    //drawBurn(deltaTime)
+	drawBury(deltaTime)
 	requestAnimationFrame(tick)
 }
 
@@ -265,7 +266,7 @@ function drawBury(deltaTime) {
 	if(!game.spritesLoaded)
 		return
 
-	drawScaled(ctx, game.img["desk"], 0, 0)
+	drawScaled(ctx, game.img["bury"], 0, 0)
 
 
 }
