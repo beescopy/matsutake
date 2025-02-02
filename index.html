@@ -163,24 +163,24 @@ function init(){
 		load("img/txt-move.png", "tut-move"),
 		load("img/txt-cut.png", "tut-cut"),
 		load("img/player.png", "player"),
-    load("img/player-left.png", "player-left"),
-    load("img/desk-01.png", "desk1"),
-    load("img/desk-02.png", "desk2"),
-    load("img/txt-bury-01.png", "bury-g01"),
-    load("img/txt-bury-02.png", "bury-g02"),
-    load("img/txt-bury-03.png", "bury-g03"),
-    load("img/txt-bury-04.png", "bury-g04"),
-    load("img/txt-bury-05.png", "bury-g05"),
-    load("img/txt-bury-06.png", "bury-g06"),
-    load("img/txt-bury-07.png", "bury-g07"),
-    load("img/txt-bury-08.png", "bury-g08"),
-    load("img/txt-bury-09.png", "bury-g09"),
-    load("img/txt-bury-10.png", "bury-g10"),
+    	load("img/player-left.png", "player-left"),
+    	load("img/desk-01.png", "desk1"),
+    	load("img/desk-02.png", "desk2"),
+    	load("img/txt-bury-01.png", "bury-g01"),
+    	load("img/txt-bury-02.png", "bury-g02"),
+    	load("img/txt-bury-03.png", "bury-g03"),
+    	load("img/txt-bury-04.png", "bury-g04"),
+    	load("img/txt-bury-05.png", "bury-g05"),
+   	 	load("img/txt-bury-06.png", "bury-g06"),
+    	load("img/txt-bury-07.png", "bury-g07"),
+    	load("img/txt-bury-08.png", "bury-g08"),
+    	load("img/txt-bury-09.png", "bury-g09"),
+    	load("img/txt-bury-10.png", "bury-g10"),
     	load("img/txt-build-01.png", "build-g1"),
     	load("img/txt-build-02.png", "build-g2"),
     	load("img/txt-build-03.png", "build-g3"),
     	load("img/txt-build-04.png", "build-g4"),
-    load("img/doc-init.png", "doc-00"),
+    	load("img/doc-init.png", "doc-00"),
 		load("img/doc-01.png", "doc-01"),
 	]
 
@@ -342,7 +342,6 @@ function drawBury(deltaTime) {
     }
 }
 
-
 function drawBuild(deltaTime) {
 	if(!game.spritesLoaded)
 		return
@@ -423,6 +422,11 @@ function drawEnding(deltaTime) {
 		drawScaled(ctx, game.img["bury-g10"], 0, game.bury.y)
 
   	ctx.globalCompositeOperation = "source-over"
+}
+
+function chooseDoc() {
+    chosenDocs.push(currentDoc)
+    currentDoc = randomDraw(docs)
 }
 
 function cut() {
