@@ -63,7 +63,14 @@ const game = {
     burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury: { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1], chosenDocs: []},
 	build: {},
-	ending: { frames: [], index: 0 },
+	ending: { 
+		frames: [
+			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
+			"bury-g08", "bury-g02", "bury-g01", "bury-g01", "bury-g03", "bury-g09",
+			"build-g3", "build-g1", "build-g2", "build-g1", "build-g1", "build-g3" 
+		],
+		index: 0 
+	},
 	ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 101, 99, 97, 95, 93, 90, 89, 89, 89, 89, 90, 92, 93, 96, 98, 101, 104, 104, 104, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103]
 }
 const ranDrawState = new Map()
@@ -393,34 +400,11 @@ function drawEnding(deltaTime) {
 		drawScaled(ctx, game.img["desk2"], 0, 0)
 	}
 
-	if(game.bury.glitch != 0 && chance(5, deltaTime) && game.bury.glitch <= 20)
-		game.bury.glitch = Math.min(game.bury.glitch + 1, 20)
+	if(chance(5, deltaTime))
+		game.ending.index = (game.ending.index + 1) % game.ending.frames.length
 
   	ctx.globalCompositeOperation = "overlay"
-
-	if(game.bury.glitch == 0)
-		drawScaled(ctx, game.img["bury-g01"], 0, game.bury.y)
-	else if(game.bury.glitch == 1)
-		drawScaled(ctx, game.img["bury-g01"], 0, game.bury.y)
-	else if(game.bury.glitch == 2)
-		drawScaled(ctx, game.img["bury-g02"], 0, game.bury.y)
-	else if(game.bury.glitch == 3)
-		drawScaled(ctx, game.img["bury-g03"], 0, game.bury.y)
-	else if(game.bury.glitch == 4)
-		drawScaled(ctx, game.img["bury-g04"], 0, game.bury.y)
-	else if(game.bury.glitch == 5)
-		drawScaled(ctx, game.img["bury-g05"], 0, game.bury.y)
-	else if(game.bury.glitch == 6)
-		drawScaled(ctx, game.img["bury-g06"], 0, game.bury.y)
-	else if(game.bury.glitch == 7)
-		drawScaled(ctx, game.img["bury-g07"], 0, game.bury.y)
-	else if(game.bury.glitch == 8)
-		drawScaled(ctx, game.img["bury-g08"], 0, game.bury.y)
-	else if(game.bury.glitch == 9)
-		drawScaled(ctx, game.img["bury-g09"], 0, game.bury.y)
-	else if(game.bury.glitch == 10)
-		drawScaled(ctx, game.img["bury-g10"], 0, game.bury.y)
-
+	drawScaled(ctx, game.img[game.ending.frames[game.ending.index]], 0, 0)
   	ctx.globalCompositeOperation = "source-over"
 }
 
