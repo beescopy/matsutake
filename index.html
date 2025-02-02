@@ -394,6 +394,7 @@ function presentFirstDoc(){
 
 function keepDoc() {
     slideAndGetNewDoc(250)
+    game.build.chosenDocs.push(game.bury.currentDoc)
 }
 
 function buryDoc() {
@@ -403,21 +404,20 @@ function buryDoc() {
 function slideAndGetNewDoc(slideXOffset) {
     game.bury.interactionCounter += 1
 
-    let timeSlideOut = 1000
-    let delay = 1000
-    let timeSlideIn = 1000
-    game.build.chosenDocs.push(game.bury.currentDoc)
+    let timeSlideOut = 666
+    let delay        = 0
+    let timeSlideIn  = 666
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docXOffset:slideXOffset}, timeSlideOut, createjs.Ease.cubicInOut)) }, 0)
-    window.setTimeout(function(){ game.bury.currentDoc = randomDraw(game.bury.docs) }, timeSlideOut)
+    window.setTimeout(function(){ game.bury.currentDoc = randomDraw(game.bury.docs) }, timeSlideOut+delay)
     if (!game.bury.choseDocs)
-        window.setTimeout(function(){ game.bury.choseDocs = true }, timeSlideOut)
-    window.setTimeout(function(){ game.bury.docXOffset = 0 }, timeSlideOut)
-    window.setTimeout(function(){ game.bury.docYOffset = 130 }, timeSlideOut)
+        window.setTimeout(function(){ game.bury.choseDocs = true }, timeSlideOut+delay)
+    window.setTimeout(function(){ game.bury.docXOffset = 0 }, timeSlideOut+delay)
+    window.setTimeout(function(){ game.bury.docYOffset = 125 }, timeSlideOut+delay)
     if (game.bury.interactionCounter >= 13) {
         startBuild()
         return
     }
-    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docYOffset:0}, timeSlideIn, createjs.Ease.cubicInOut)) }, delay)
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docYOffset:0}, timeSlideIn, createjs.Ease.cubicInOut)) }, timeSlideOut+delay)
 }
 
 function drawBuild(deltaTime) {
@@ -513,9 +513,9 @@ function startBury(){
 }
 
 function startBuild(){
-    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicOut)) }, 0)
-    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 2000)
-    window.setTimeout(function(){ say("build") }, 2000)
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicOut)) }, 1200)
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 2500)
+    window.setTimeout(function(){ say("build") }, 3300)
     window.setTimeout(function(){ game.currentView = "build" }, 3000)
 
 }
