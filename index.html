@@ -86,17 +86,24 @@ window.addEventListener("load", function() {
 
 
 	document.getElementById("pressplay").addEventListener("click", function() {
-		game.music = new Audio('aud/burn-bg.mp3');
-        game.music.volume = 1;
-		game.music.addEventListener('ended', function() {
-		    game.music.currentTime = 0;
-		    game.music.play();
-		}, false);
-		game.music.play();
+		playGameMusic('aud/burn-bg.mp3')
 		document.getElementById("pressplay").style.display = "none"
 		window.setTimeout(function(){ say("burn") }, 1000)
 	})
 })
+
+function playGameMusic(file) {
+    if (game.music){
+        game.music.pause()
+    }
+    game.music = new Audio(file);
+    game.music.volume = 1;
+    game.music.addEventListener('ended', function() {
+        game.music.currentTime = 0;
+        game.music.play();
+    }, false);
+    game.music.play();
+}
 
 function init(){
 	layout()
@@ -515,12 +522,14 @@ function cut() {
 }
 
 function startBury(){
+    playGameMusic('aud/bury-bg.mp3')
     window.setTimeout(function(){ game.currentView = "bury" }, 0)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 0)
     window.setTimeout(function(){ game.bury.glitch = 1 }, 3500)
 }
 
 function startBuild(){
+    playGameMusic('aud/build-bg.mp3')
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicOut)) }, 1200)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 3200)
     window.setTimeout(function(){ say("build") }, 3300)
@@ -540,7 +549,7 @@ function firstmove() {
 
 function say(line) {
 	var myAudio = new Audio(`aud/${line}-tts.mp3`);
-    myAudio.volume = 0.5;
+    myAudio.volume = 0.65;
 	myAudio.play();
 }
 
