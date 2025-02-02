@@ -62,7 +62,7 @@ const game = {
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
-	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3], people: [1], answered: 0},
+	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3], people: [1], answered: 0},
 	ending: { 
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
@@ -257,9 +257,9 @@ function tick() {
 
 	if(game.player.moving) {
 		if(game.player.movingLeft)
-			game.player.x -= deltaTime * 0.08
+			game.player.x -= deltaTime * 0.07
 		else
-			game.player.x += deltaTime * 0.08
+			game.player.x += deltaTime * 0.07
 	}
 
 	game.player.x = Math.max(0, Math.min(game.player.x, 245))
@@ -430,7 +430,11 @@ function handoutDoc() {
 		createjs.Tween.get(game.build).wait(500).to({questionPos:-125}, 2000, createjs.Ease.cubicIn).call(function(){
 			game.build.question = randomDraw(game.build.questions)
 			game.build.person = randomDraw(game.build.people)
-		}).wait(2000).to({questionPos:0}, 2000, createjs.Ease.cubicOut).call(function(){ 
+			if(game.build.answered > 2) {
+				game.tweens.push(createjs.Tween.get(game.build).wait(500).to({fanPos: 125}, 1750, createjs.Ease.cubicIn))
+			}
+
+		}).wait(2000).to({questionPos: game.build.answered > 2 ? -125 : 0 }, 2000, createjs.Ease.cubicOut).call(function(){ 
 		game.build.animateDoc = -1 
 		if(game.build.answered > 2)
 			startEnding()
@@ -549,6 +553,28 @@ function drawEnding(deltaTime) {
 		drawScaled(ctx, game.img["lantern2"], 0, 0)
 		drawScaled(ctx, game.img["p12"], 0, 0)
 		drawScaled(ctx, game.img["door2"], 0, 0)
+	}
+
+	drawScaled(ctx, game.img[`q${game.build.question}`], 0, game.build.questionPos)
+
+	if(game.build.chosenDocs.length > 0) {
+		const fanX = game.build.fanPos
+		const fanIdx = game.build.fanIdx
+		const mainDoc = game.img[`doc-${String(game.build.chosenDocs[fanIdx]).padStart(2, "0")}-s`]
+		const mainDocLeft = Math.round((250 - mainDoc.width)/2)
+		const mainDocRight = mainDocLeft + mainDoc.width
+
+		if(game.build.chosenDocs.length > 1) {
+			const firstFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
+			drawScaled(ctx, firstFan, mainDocLeft - 30, fanX + 16)
+		}
+
+		if(game.build.chosenDocs.length > 2) {
+			const secondFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
+			drawScaled(ctx, secondFan, mainDocRight - secondFan.width + 30, fanX + 16)
+		}
+		
+		drawScaled(ctx, mainDoc, mainDocLeft, fanX)
 	}
 
 	if(chance(5, deltaTime))
