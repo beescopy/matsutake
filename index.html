@@ -63,7 +63,7 @@ const game = {
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
-	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3], people: [1, 2], answered: 0},
+	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3,4,5,6], people: [1, 2], answered: 0},
 	ending: {
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
@@ -237,7 +237,10 @@ function init(){
 		load("img/person-2-2.png", "p22"),
 		load("img/question-1.png", "q1"),
 		load("img/question-2.png", "q2"),
-		load("img/question-3.png", "q3"),
+        load("img/question-3.png", "q3"),
+        load("img/question-4.png", "q4"),
+        load("img/question-5.png", "q5"),
+		load("img/question-6.png", "q6"),
 	]
 
 	Promise.all(promises).then(function() {
