@@ -418,6 +418,9 @@ function keepDoc() {
 
 function buryDoc() {
     slideAndGetNewDoc(-250)
+    var myAudio = new Audio(`aud/crunch.mp3`);
+    myAudio.volume = 0.3;
+	myAudio.play();
 }
 
 function handoutDoc() {
@@ -513,7 +516,7 @@ function drawBuild(deltaTime) {
 			const secondFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
 			drawScaled(ctx, secondFan, mainDocRight - secondFan.width + 30, fanX + 16)
 		}
-		
+
 		drawScaled(ctx, mainDoc, mainDocLeft, fanX)
 	}
 
