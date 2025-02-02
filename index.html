@@ -87,18 +87,18 @@ window.addEventListener("load", function() {
 
 
 	document.getElementById("pressplay").addEventListener("click", function() {
-		playGameMusic('aud/burn-bg.mp3')
+		playGameMusic('aud/burn-bg.mp3', 1)
 		document.getElementById("pressplay").style.display = "none"
 		window.setTimeout(function(){ say("burn") }, 1000)
 	})
 })
 
-function playGameMusic(file) {
+function playGameMusic(file, volume) {
     if (game.music){
         game.music.pause()
     }
     game.music = new Audio(file);
-    game.music.volume = 1;
+    game.music.volume = volume;
     game.music.addEventListener('ended', function() {
         game.music.currentTime = 0;
         game.music.play();
@@ -627,14 +627,14 @@ function cut() {
 
 function startBury(){
 	game.build.chosenDocs = []
-    playGameMusic('aud/bury-bg.mp3')
+    playGameMusic('aud/bury-bg.mp3', 0.7)
     window.setTimeout(function(){ game.currentView = "bury" }, 0)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 0)
     window.setTimeout(function(){ game.bury.glitch = 1 }, 3500)
 }
 
 function startBuild(){
-	playGameMusic('aud/build-bg.mp3')
+	playGameMusic('aud/build-bg.mp3', 1)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicIn)) }, 1200)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 2500)
     window.setTimeout(function(){ say("build") }, 3300)
