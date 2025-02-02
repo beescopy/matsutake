@@ -83,6 +83,9 @@ class Controls {
 		}
 		else if(evt.keyCode == 38 || evt.keyCode == 87) {
 			game.player.vspeed = -1
+
+			if(game.currentView == "build")
+				handoutDoc()
 		}
 		else if(evt.keyCode == 88 ) {
 			cut()
