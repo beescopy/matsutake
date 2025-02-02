@@ -1,3 +1,3 @@
 # matsutake
 
-(itch.io)[https://karosserie.itch.io/matsutake]
+[itch.io](https://karosserie.itch.io/matsutake)
