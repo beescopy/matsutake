@@ -55,6 +55,7 @@ body {
 
 const game = {
     music: false,
+    voice: false,
 	currentView: "burn",
 	tweens: [],
 	spritesLoaded: false,
@@ -63,7 +64,7 @@ const game = {
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
 	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3], people: [1], answered: 0},
-	ending: { 
+	ending: {
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
 			"bury-g08", "bury-g02", "bury-g01", "bury-g01", "bury-g03", "bury-g09",
@@ -412,18 +413,18 @@ function keepDoc() {
     slideAndGetNewDoc(250)
     if (!game.bury.freezeDocs) {
         game.build.chosenDocs.push(game.bury.currentDoc)
+        soundEffect("swish")
     }
     game.bury.freezeDocs = true
 }
 
 function buryDoc() {
     slideAndGetNewDoc(-250)
-    var myAudio = new Audio(`aud/crunch.mp3`);
-    myAudio.volume = 0.3;
-	myAudio.play();
+    soundEffect("crunch")
 }
 
 function handoutDoc() {
+    soundEffect("swish")
 	game.build.answered += 1
 
 	game.build.animateDoc = game.build.chosenDocs.splice(game.build.fanIdx, 1)
@@ -439,9 +440,9 @@ function handoutDoc() {
 				game.tweens.push(createjs.Tween.get(game.build).wait(500).to({fanPos: 125}, 1750, createjs.Ease.cubicIn))
 			}
 
-		}).wait(2000).to({questionPos: game.build.answered > 2 ? -125 : 0 }, 1700, createjs.Ease.cubicIn).call(function(){ 
-		game.build.animateDoc = -1 
-		if(game.build.answered > 2)
+		}).wait(2000).to({questionPos: game.build.answered > 2 ? -125 : 0 }, 1700, createjs.Ease.cubicIn).call(function(){
+		game.build.animateDoc = -1
+		if(game.build.answered > 2 && game.currentView != "ending")
 			startEnding()
 	}))
 }
@@ -458,7 +459,7 @@ function slideAndGetNewDoc(slideXOffset) {
         window.setTimeout(function(){ game.bury.choseDocs = true }, timeSlideOut+delay)
     window.setTimeout(function(){ game.bury.docXOffset = 0 }, timeSlideOut+delay)
     window.setTimeout(function(){ game.bury.docYOffset = 125 }, timeSlideOut+delay)
-    if (game.bury.interactionCounter >= 13) {
+    if (game.bury.interactionCounter == 13) {
         startBuild()
         return
     }
@@ -495,7 +496,7 @@ function drawBuild(deltaTime) {
 		drawScaled(ctx, game.img[`q${game.build.question}`], 0, game.build.questionPos-1)
 	}
 
-	if(game.build.chosenDocs.length == 0 && game.build.animateDoc == -1) {
+	if(game.build.chosenDocs.length == 0 && game.build.animateDoc == -1 && game.currentView != "ending") {
 		startEnding()
 		return
 	}
@@ -576,7 +577,7 @@ function drawEnding(deltaTime) {
 			const secondFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
 			drawScaled(ctx, secondFan, mainDocRight - secondFan.width + 30, fanX + 16)
 		}
-		
+
 		drawScaled(ctx, mainDoc, mainDocLeft, fanX)
 	}
 
@@ -589,6 +590,8 @@ function drawEnding(deltaTime) {
 function cut() {
 	if(Math.abs(game.player.x - 120) > 5 || game.burn.cut)
 		return
+
+    soundEffect("cut")
 
 	game.tweens.push(createjs.Tween.get(game.burn).to({starOpacity: 1}, 2000, createjs.Ease.cubicInOut));
 	game.burn.cut = true
@@ -623,6 +626,15 @@ function startBuild(){
 function startEnding(){
 	say("ending")
     game.currentView = "ending"
+    delay = 8000
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.ending).to({opacity: 0}, 10000, createjs.Ease.cubicOut)) }, delay)
+    window.setTimeout(function(){ game.music.volume = 0.9}, delay + 1000)
+    window.setTimeout(function(){ game.music.volume = 0.8}, delay + 2000)
+    window.setTimeout(function(){ game.music.volume = 0.7}, delay + 3000)
+    window.setTimeout(function(){ game.music.volume = 0.6}, delay + 4000)
+    window.setTimeout(function(){ game.music.volume = 0.5}, delay + 5000)
+    window.setTimeout(function(){ game.music.volume = 0.2}, delay + 6000)
+    window.setTimeout(function(){ game.music.volume = 0},   delay + 7000)
 }
 
 function firstmove() {
@@ -630,10 +642,18 @@ function firstmove() {
 	game.tweens.push(createjs.Tween.get(game.burn).wait(4000).to({cutOpacity: 1}, 3000, createjs.Ease.cubicOut).wait(3000).to({cutOpacity: 0}, 4000, createjs.Ease.cubicIn));
 }
 
+function soundEffect(name){
+    var myAudio = new Audio(`aud/${name}.mp3`);
+    myAudio.volume = 0.3;
+    myAudio.play();
+}
+
 function say(line) {
-	var myAudio = new Audio(`aud/${line}-tts.mp3`);
-    myAudio.volume = 0.65;
-	myAudio.play();
+    if (game.voice)
+        game.voice.pause()
+    game.voice = new Audio(`aud/${line}-tts.mp3`);
+    game.voice.volume = 0.65;
+	game.voice.play();
 }
 
 function drawScaled(ctx, img, sx, sy){
