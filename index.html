@@ -80,8 +80,8 @@ window.addEventListener("load", function() {
 		game.music = new Audio('aud/burn-bg.mp3');
         game.music.volume = 1;
 		game.music.addEventListener('ended', function() {
-		    this.currentTime = 0;
-		    this.play();
+		    game.music.currentTime = 0;
+		    game.music.play();
 		}, false);
 		game.music.play();
 		document.getElementById("pressplay").style.display = "none"
