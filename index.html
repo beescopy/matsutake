@@ -62,6 +62,8 @@ const game = {
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury: { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1], chosenDocs: []},
+	build: {},
+	ending: { frames: [], index: 0 },
 	ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 101, 99, 97, 95, 93, 90, 89, 89, 89, 89, 90, 92, 93, 96, 98, 101, 104, 104, 104, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103]
 }
 const ranDrawState = new Map()
@@ -174,6 +176,10 @@ function init(){
     load("img/txt-bury-08.png", "bury-g08"),
     load("img/txt-bury-09.png", "bury-g09"),
     load("img/txt-bury-10.png", "bury-g10"),
+    	load("img/txt-build-01.png", "build-g1"),
+    	load("img/txt-build-02.png", "build-g2"),
+    	load("img/txt-build-03.png", "build-g3"),
+    	load("img/txt-build-04.png", "build-g4"),
     load("img/doc-init.png", "doc-00"),
 		load("img/doc-01.png", "doc-01"),
 	]
@@ -213,8 +219,15 @@ function tick() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (game.currentView == "burn") {
         drawBurn(deltaTime)
-    } else if (game.currentView == "bury") {
+    } 
+   	else if (game.currentView == "bury") {
         drawBury(deltaTime)
+    }
+    else if (game.currentView == "build") {
+        drawBuild(deltaTime)
+    }
+    else {
+        drawEnding(deltaTime)
     }
 	requestAnimationFrame(tick)
 }
@@ -330,6 +343,87 @@ function drawBury(deltaTime) {
 }
 
 
+function drawBuild(deltaTime) {
+	if(!game.spritesLoaded)
+		return
+
+	ctx.globalAlpha = 1;
+  
+  	game.bury.time = (game.bury.time + deltaTime) % 5000
+	const deskFrame = Math.floor(game.bury.time / 750) % 2
+
+	if(game.build.glitch == 0 && chance(25, deltaTime))
+		game.build.glitch = Math.floor(Math.random()*4)
+	else if(game.build.glitch != 0 && chance(10, deltaTime))
+		game.burn.glitch = 0
+	else if(game.build.glitch != 0 && chance(5, deltaTime))
+		game.build.glitch = 1 + Math.floor(Math.random()*3)
+
+  	if(deskFrame == 0){
+		drawScaled(ctx, game.img["desk1"], 0, 0)
+	} else {
+		drawScaled(ctx, game.img["desk2"], 0, 0)
+	}
+
+  	ctx.globalCompositeOperation = "overlay"
+
+	if(game.build.glitch == 0)
+		drawScaled(ctx, game.img["build-g1"], 0, 0)
+	else if(game.build.glitch == 1)
+		drawScaled(ctx, game.img["build-g2"], 0, 0)
+	else if(game.build.glitch == 2)
+		drawScaled(ctx, game.img["build-g3"], 0, 0)
+	else if(game.build.glitch == 3)
+		drawScaled(ctx, game.img["build-g4"], 0, 0)
+
+  	ctx.globalCompositeOperation = "source-over"
+}
+
+function drawEnding(deltaTime) {
+	if(!game.spritesLoaded)
+		return
+
+	ctx.globalAlpha = 1;
+
+  	game.bury.time = (game.bury.time + deltaTime) % 5000
+	const deskFrame = Math.floor(game.bury.time / 750) % 2
+
+  	if(deskFrame == 0){
+		drawScaled(ctx, game.img["desk1"], 0, 0)
+	} else {
+		drawScaled(ctx, game.img["desk2"], 0, 0)
+	}
+
+	if(game.bury.glitch != 0 && chance(5, deltaTime) && game.bury.glitch <= 20)
+		game.bury.glitch = Math.min(game.bury.glitch + 1, 20)
+
+  	ctx.globalCompositeOperation = "overlay"
+
+	if(game.bury.glitch == 0)
+		drawScaled(ctx, game.img["bury-g01"], 0, game.bury.y)
+	else if(game.bury.glitch == 1)
+		drawScaled(ctx, game.img["bury-g01"], 0, game.bury.y)
+	else if(game.bury.glitch == 2)
+		drawScaled(ctx, game.img["bury-g02"], 0, game.bury.y)
+	else if(game.bury.glitch == 3)
+		drawScaled(ctx, game.img["bury-g03"], 0, game.bury.y)
+	else if(game.bury.glitch == 4)
+		drawScaled(ctx, game.img["bury-g04"], 0, game.bury.y)
+	else if(game.bury.glitch == 5)
+		drawScaled(ctx, game.img["bury-g05"], 0, game.bury.y)
+	else if(game.bury.glitch == 6)
+		drawScaled(ctx, game.img["bury-g06"], 0, game.bury.y)
+	else if(game.bury.glitch == 7)
+		drawScaled(ctx, game.img["bury-g07"], 0, game.bury.y)
+	else if(game.bury.glitch == 8)
+		drawScaled(ctx, game.img["bury-g08"], 0, game.bury.y)
+	else if(game.bury.glitch == 9)
+		drawScaled(ctx, game.img["bury-g09"], 0, game.bury.y)
+	else if(game.bury.glitch == 10)
+		drawScaled(ctx, game.img["bury-g10"], 0, game.bury.y)
+
+  	ctx.globalCompositeOperation = "source-over"
+}
 
 function cut() {
 	if(Math.abs(game.player.x - 120) > 5 || game.burn.cut)
@@ -348,8 +442,18 @@ function cut() {
 function startBury(){
     window.setTimeout(function(){ game.currentView = "bury" }, 0)
     game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut));
-    window.setTimeout(function(){ game.bury.glitch = 1 }, 3500)
+    window.setTimeout(function(){ game.bury.glitch = 1 }, 3750)
 
+}
+
+function startBuild(){
+	say("build")
+    game.currentView = "build"
+}
+
+function startEnding(){
+	say("ending")
+    game.currentView = "ending"
 }
 
 function firstmove() {
