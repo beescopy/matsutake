@@ -365,6 +365,7 @@ function presentFirstDoc(){
 
 function keepDoc() {
     slideAndGetNewDoc(250)
+    game.build.chosenDocs.push(game.bury.currentDoc)
 }
 
 function buryDoc() {
@@ -377,7 +378,6 @@ function slideAndGetNewDoc(slideXOffset) {
     let timeSlideOut = 666
     let delay        = 0
     let timeSlideIn  = 666
-    game.build.chosenDocs.push(game.bury.currentDoc)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docXOffset:slideXOffset}, timeSlideOut, createjs.Ease.cubicInOut)) }, 0)
     window.setTimeout(function(){ game.bury.currentDoc = randomDraw(game.bury.docs) }, timeSlideOut+delay)
     if (!game.bury.choseDocs)
