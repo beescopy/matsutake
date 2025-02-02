@@ -61,8 +61,8 @@ const game = {
 	debug: false,
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
-	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], chosenDocs: [], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
-	build: { opacity: 0},
+	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
+	build: { opacity: 0, chosenDocs: []},
     ground: [103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 101, 99, 97, 95, 93, 90, 89, 89, 89, 89, 90, 92, 93, 96, 98, 101, 104, 104, 104, 105, 105, 105, 105, 105, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103]
 }
 const ranDrawState = new Map()
@@ -377,7 +377,7 @@ function slideAndGetNewDoc(slideXOffset) {
     let timeSlideOut = 1000
     let delay = 1000
     let timeSlideIn = 1000
-    game.bury.chosenDocs.push(game.bury.currentDoc)
+    game.build.chosenDocs.push(game.bury.currentDoc)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docXOffset:slideXOffset}, timeSlideOut, createjs.Ease.cubicInOut)) }, 0)
     window.setTimeout(function(){ game.bury.currentDoc = randomDraw(game.bury.docs) }, timeSlideOut)
     if (!game.bury.choseDocs)
@@ -448,11 +448,6 @@ function drawEnding(deltaTime) {
   	ctx.globalCompositeOperation = "overlay"
 	drawScaled(ctx, game.img[game.ending.frames[game.ending.index]], 0, 0)
   	ctx.globalCompositeOperation = "source-over"
-}
-
-function chooseDoc() {
-    chosenDocs.push(currentDoc)
-    currentDoc = randomDraw(docs)
 }
 
 function cut() {
