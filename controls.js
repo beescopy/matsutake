@@ -61,9 +61,9 @@ class Controls {
 		}
 		else if(game.currentView == "build") {
 			if(x < width * 0.4)
-				game.controls.pressRight()
-			else if(x > width * 0.6)
 				game.controls.pressLeft()
+			else if(x > width * 0.6)
+				game.controls.pressRight()
 		}
 	}
 
@@ -111,7 +111,7 @@ class Controls {
 		game.player.moving = true
 
 		if(game.currentView == "build")
-			game.build.fanIdx = (game.build.fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length
+			game.build.fanIdx = (game.build.fanIdx + 1) % game.build.chosenDocs.length
 		else if(game.currentView == "bury")
 			buryDoc()
 	}
@@ -125,7 +125,7 @@ class Controls {
 		game.player.moving = true
 
 		if(game.currentView == "build")
-			game.build.fanIdx = (game.build.fanIdx + 1) % game.build.chosenDocs.length
+			game.build.fanIdx = (game.build.fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length
 		else if(game.currentView == "bury")
 			keepDoc()
 	}
