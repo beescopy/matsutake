@@ -2,16 +2,16 @@
 ~~doc00 - explanation~~
 ~~collect / discard docs~~
 ~~animate fade in doc~~
-soundtrack
+~~soundtrack~~
 
 # stage 3
-background
+~~background~~
 questions
-soundtrack
+~~soundtrack~~
 ~~tts~~
 ~~rec0de.net/var/things to move docs?~~
-how to return docs
-how to view all docs (like playing cards?)
+~~how to return docs~~
+~~how to view all docs (like playing cards?)~~
 people
 
 # end

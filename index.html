@@ -67,7 +67,7 @@ const game = {
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
 			"bury-g08", "bury-g02", "bury-g01", "bury-g01", "bury-g03", "bury-g09",
-			"build-g3", "build-g1", "build-g2", "build-g1", "build-g1", "build-g3" 
+			"build-g3", "build-g1", "build-g2", "build-g1", "build-g1", "build-g3"
 		],
 		index: 0,
 		opacity: 1
@@ -86,17 +86,24 @@ window.addEventListener("load", function() {
 
 
 	document.getElementById("pressplay").addEventListener("click", function() {
-		game.music = new Audio('aud/burn-bg.mp3');
-        game.music.volume = 1;
-		game.music.addEventListener('ended', function() {
-		    game.music.currentTime = 0;
-		    game.music.play();
-		}, false);
-		game.music.play();
+		playGameMusic('aud/burn-bg.mp3')
 		document.getElementById("pressplay").style.display = "none"
 		window.setTimeout(function(){ say("burn") }, 1000)
 	})
 })
+
+function playGameMusic(file) {
+    if (game.music){
+        game.music.pause()
+    }
+    game.music = new Audio(file);
+    game.music.volume = 1;
+    game.music.addEventListener('ended', function() {
+        game.music.currentTime = 0;
+        game.music.play();
+    }, false);
+    game.music.play();
+}
 
 function init(){
 	layout()
@@ -393,8 +400,15 @@ function presentFirstDoc(){
 }
 
 function keepDoc() {
+    if (game.bury.currentDoc == 0) {
+        buryDoc()
+        return
+    }
     slideAndGetNewDoc(250)
-    game.build.chosenDocs.push(game.bury.currentDoc)
+    if (!game.bury.freezeDocs) {
+        game.build.chosenDocs.push(game.bury.currentDoc)
+    }
+    game.bury.freezeDocs = true
 }
 
 function buryDoc() {
@@ -405,7 +419,7 @@ function slideAndGetNewDoc(slideXOffset) {
     game.bury.interactionCounter += 1
 
     let timeSlideOut = 666
-    let delay        = 0
+    let delay        = 6
     let timeSlideIn  = 666
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docXOffset:slideXOffset}, timeSlideOut, createjs.Ease.cubicInOut)) }, 0)
     window.setTimeout(function(){ game.bury.currentDoc = randomDraw(game.bury.docs) }, timeSlideOut+delay)
@@ -418,6 +432,7 @@ function slideAndGetNewDoc(slideXOffset) {
         return
     }
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docYOffset:0}, timeSlideIn, createjs.Ease.cubicInOut)) }, timeSlideOut+delay)
+    window.setTimeout(function(){ game.bury.freezeDocs = false }, timeSlideOut+delay)
 }
 
 function drawBuild(deltaTime) {
@@ -526,12 +541,14 @@ function cut() {
 }
 
 function startBury(){
+    playGameMusic('aud/bury-bg.mp3')
     window.setTimeout(function(){ game.currentView = "bury" }, 0)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 0)
     window.setTimeout(function(){ game.bury.glitch = 1 }, 3500)
 }
 
 function startBuild(){
+	playGameMusic('aud/build-bg.mp3')
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicIn)) }, 1200)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 2500)
     window.setTimeout(function(){ say("build") }, 3300)
@@ -553,7 +570,7 @@ function firstmove() {
 
 function say(line) {
 	var myAudio = new Audio(`aud/${line}-tts.mp3`);
-    myAudio.volume = 0.5;
+    myAudio.volume = 0.65;
 	myAudio.play();
 }
 
