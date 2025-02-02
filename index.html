@@ -117,7 +117,7 @@ function init(){
 	document.addEventListener('keyup', game.controls.keyUpListener);
 	document.addEventListener('keypress', game.controls.keyPressListener);
 
-	/*document.addEventListener('mousedown', function(e) {
+	document.addEventListener('mousedown', function(e) {
 		if(!game.controls.isTouch && e.button == 0)
 			game.controls.pressHandler(e.clientX, e.clientY, "mouse");
 	}, true);
@@ -149,7 +149,7 @@ function init(){
 		for(var i = 0; i < e.changedTouches.length; i++)
 			game.controls.pressHandler(e.changedTouches[i].clientX, e.changedTouches[i].clientY, e.changedTouches[i].identifier)
 		e.preventDefault();
-	}, true);*/
+	}, true);
 
 	// Explicitly set passive to false if supported to disable FF/Chrome scroll optimizations
 	var passiveIfSupported = true;
@@ -178,10 +178,13 @@ function init(){
 		load("img/powerline-03.png", "powerline-cut"),
 		load("img/txt-move.png", "tut-move"),
 		load("img/txt-cut.png", "tut-cut"),
+		load("img/txt-tap.png", "tut-tap"),
+		load("img/side-arrows.png", "tut-arrows"),
 		load("img/player.png", "player"),
     	load("img/player-left.png", "player-left"),
     	load("img/desk-01.png", "desk1"),
     	load("img/desk-02.png", "desk2"),
+    	load("img/bury-instruct.png", "bury-instruct"),
     	load("img/txt-bury-01.png", "bury-g01"),
     	load("img/txt-bury-02.png", "bury-g02"),
     	load("img/txt-bury-03.png", "bury-g03"),
@@ -347,7 +350,7 @@ function drawBurn(deltaTime) {
 	ctx.globalAlpha = game.burn.moveOpacity
 	drawScaled(ctx, game.img["tut-move"], 0, game.burn.yOffset)
 	ctx.globalAlpha = game.burn.cutOpacity
-	drawScaled(ctx, game.img["tut-cut"], 0, game.burn.yOffset)
+	drawScaled(ctx, game.controls.isTouch ? game.img["tut-tap"] : game.img["tut-cut"], 0, game.burn.yOffset)
 	ctx.globalAlpha = 1
 }
 
@@ -374,6 +377,8 @@ function drawBury(deltaTime) {
 		game.bury.glitch = Math.min(game.bury.glitch + 1, 20)
 
     ctx.globalCompositeOperation = "overlay"
+
+    drawScaled(ctx, game.img["bury-instruct"], 0, 0)
 
 	if(game.bury.glitch == 0)
 		drawScaled(ctx, game.img["bury-g01"], 0, game.bury.y)
@@ -508,6 +513,10 @@ function drawBuild(deltaTime) {
 		drawScaled(ctx, game.img["door2"], 0, 0)
 		drawScaled(ctx, game.img[`q${game.build.question}`], 0, game.build.questionPos-1)
 	}
+
+	ctx.globalAlpha = 0.5 * game.build.opacity;
+    drawScaled(ctx, game.img["tut-arrows"], 0, 0)
+    ctx.globalAlpha = game.build.opacity;
 
 	if(game.build.chosenDocs.length == 0 && game.build.animateDoc == -1 && game.currentView != "ending") {
 		startEnding()
