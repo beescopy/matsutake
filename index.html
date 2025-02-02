@@ -327,7 +327,10 @@ function drawBury(deltaTime) {
     }
 }
 
-
+function chooseDoc() {
+    chosenDocs.push(currentDoc)
+    currentDoc = randomDraw(docs)
+}
 
 function cut() {
 	if(Math.abs(game.player.x - 120) > 5 || game.burn.cut)
