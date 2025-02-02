@@ -356,10 +356,6 @@ function drawBury(deltaTime) {
             drawScaled(ctx, game.img["doc-00"], game.bury.docXOffset,  game.bury.docYOffset + game.bury.y)
         }
     }
-
-    if (game.bury.interactionCounter >= 13) {
-        startBuild()
-    }
 }
 
 
@@ -388,6 +384,10 @@ function slideAndGetNewDoc(slideXOffset) {
         window.setTimeout(function(){ game.bury.choseDocs = true }, timeSlideOut)
     window.setTimeout(function(){ game.bury.docXOffset = 0 }, timeSlideOut)
     window.setTimeout(function(){ game.bury.docYOffset = 130 }, timeSlideOut)
+    if (game.bury.interactionCounter >= 13) {
+        startBuild()
+        return
+    }
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docYOffset:0}, timeSlideIn, createjs.Ease.cubicInOut)) }, delay)
 }
 
