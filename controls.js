@@ -66,6 +66,9 @@ class Controls {
 			}
 			game.player.movingLeft = false
 			game.player.moving = true
+
+			if(game.currentView == "build")
+				game.build.fanIdx = (game.build.fanIdx + 1) % game.build.chosenDocs.length
 		}
 		else if(evt.keyCode == 37 || evt.keyCode == 65) {
 			if(!this.moved) {
@@ -74,6 +77,9 @@ class Controls {
 			}
 			game.player.movingLeft = true
 			game.player.moving = true
+
+			if(game.currentView == "build")
+				game.build.fanIdx = (game.build.fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length
 		}
 		else if(evt.keyCode == 38 || evt.keyCode == 87) {
 			game.player.vspeed = -1

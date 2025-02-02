@@ -62,7 +62,7 @@ const game = {
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
-	build: { opacity: 0, chosenDocs: []},
+	build: { opacity: 0, fanIdx: 0, chosenDocs: [4, 5, 6], showBuild: true, fanPos: 125},
 	ending: { 
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
@@ -449,12 +449,31 @@ function drawBuild(deltaTime) {
 		drawScaled(ctx, game.img["q1"], 0, -1)
 	}
 
-	const mainDoc = game.img["doc-01-s"]
-	const firstFan = game.img["doc-02-s"]
-	const secondFan = game.img["doc-03-s"]
-	drawScaled(ctx, firstFan, Math.round((250 - firstFan.width)/2 - 25), 74)
-	drawScaled(ctx, secondFan, Math.round((250 - secondFan.width)/2 + 25), 74)
-	drawScaled(ctx, mainDoc, Math.round((250 - mainDoc.width)/2), 58)
+	if(game.build.chosenDocs.length == 0) {
+		startEnding()
+		return
+	}
+
+	const fanX = game.build.fanPos
+	const fanIdx = game.build.fanIdx
+	const mainDoc = game.img[`doc-${String(game.build.chosenDocs[fanIdx]).padStart(2, "0")}-s`]
+	const mainDocLeft = Math.round((250 - mainDoc.width)/2)
+	const mainDocRight = mainDocLeft + mainDoc.width
+
+	if(game.build.chosenDocs.length > 1) {
+		const firstFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
+		drawScaled(ctx, firstFan, mainDocLeft - 30, fanX + 16)
+	}
+
+	if(game.build.chosenDocs.length > 2) {
+		const secondFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
+		drawScaled(ctx, secondFan, mainDocRight - secondFan.width + 30, fanX + 16)
+	}
+	
+	drawScaled(ctx, mainDoc, mainDocLeft, fanX)
+
+	if(!game.build.showBuild)
+		return
 
 	if(game.build.glitch == 0)
 		drawScaled(ctx, game.img["build-g1"], 0, 0)
@@ -513,10 +532,12 @@ function startBury(){
 }
 
 function startBuild(){
-    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicOut)) }, 1200)
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicIn)) }, 1200)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 2500)
     window.setTimeout(function(){ say("build") }, 3300)
-    window.setTimeout(function(){ game.currentView = "build" }, 3000)
+    window.setTimeout(function(){ game.currentView = "build" }, 2500)
+    game.tweens.push(createjs.Tween.get(game.build).wait(10000).to({fanPos: 58}, 3000, createjs.Ease.cubicOut))
+    window.setTimeout(function(){ game.build.showBuild = false }, 10000)
 
 }
 
