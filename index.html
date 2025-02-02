@@ -61,7 +61,7 @@ const game = {
 	debug: false,
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn: { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
-	bury: { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1], chosenDocs: []},
+	bury: { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1], chosenDocs: [], choseDocs: false, docXOffset: 0, docYOffset: 130},
 	build: {},
 	ending: { 
 		frames: [
@@ -226,7 +226,7 @@ function tick() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (game.currentView == "burn") {
         drawBurn(deltaTime)
-    } 
+    }
    	else if (game.currentView == "bury") {
         drawBury(deltaTime)
     }
@@ -341,12 +341,33 @@ function drawBury(deltaTime) {
 		drawScaled(ctx, game.img["bury-g10"], 0, game.bury.y)
 
     ctx.globalCompositeOperation = "source-over"
-	if(game.bury.glitch == 20)
+	if(game.bury.glitch == 10) {
         game.bury.showDocs = true
-    if(game.bury.showDocs) {
-    		drawScaled(ctx, game.img["doc-00"], 0, game.bury.y)
-        //drawScaled(ctx, game.img["doc-"+String(randomDraw(game.bury.docs)).padStart(2, '0')], 0, game.bury.y)
+        presentFirstDoc()
     }
+    if(game.bury.showDocs) {
+        if(game.bury.choseDocs) {
+            drawScaled(ctx, game.img["doc-"+String(game.bury.currentDoc).padStart(2, '0')], game.bury.docXOffset, game.bury.docYOffset + game.bury.y)
+        } else {
+            drawScaled(ctx, game.img["doc-00"], game.bury.docXOffset,  game.bury.docYOffset + game.bury.y)
+        }
+    }
+}
+
+
+function presentFirstDoc(){
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docYOffset:0}, 2000, createjs.Ease.cubicInOut)) }, 200)
+}
+
+function keepDoc() {
+    game.bury.chosenDocs.push(game.bury.currentDoc)
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docXOffset:250}, 2000, createjs.Ease.cubicInOut)) }, 0)
+    window.setTimeout(function(){ game.bury.currentDoc = randomDraw(game.bury.docs) }, 2000)
+    if (!game.bury.choseDocs)
+        window.setTimeout(function(){ game.bury.choseDocs = true }, 2000)
+    window.setTimeout(function(){ game.bury.docXOffset = 0 }, 2000)
+    window.setTimeout(function(){ game.bury.docYOffset = 130 }, 2000)
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docYOffset:0}, 2000, createjs.Ease.cubicInOut)) }, 2000)
 }
 
 function drawBuild(deltaTime) {
@@ -354,7 +375,7 @@ function drawBuild(deltaTime) {
 		return
 
 	ctx.globalAlpha = 1;
-  
+
   	game.bury.time = (game.bury.time + deltaTime) % 5000
 	const deskFrame = Math.floor(game.bury.time / 750) % 2
 
@@ -429,9 +450,8 @@ function cut() {
 
 function startBury(){
     window.setTimeout(function(){ game.currentView = "bury" }, 0)
-    game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut));
-    window.setTimeout(function(){ game.bury.glitch = 1 }, 3750)
-
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 0)
+    window.setTimeout(function(){ game.bury.glitch = 1 }, 3500)
 }
 
 function startBuild(){

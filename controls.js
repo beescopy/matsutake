@@ -66,7 +66,6 @@ class Controls {
 			}
 			game.player.movingLeft = false
 			game.player.moving = true
-			game.bury.chooseDoc()
 		}
 		else if(evt.keyCode == 37 || evt.keyCode == 65) {
 			if(!this.moved) {
@@ -75,13 +74,18 @@ class Controls {
 			}
 			game.player.movingLeft = true
 			game.player.moving = true
-			game.bury.discardDoc()
 		}
 		else if(evt.keyCode == 38 || evt.keyCode == 87) {
 			game.player.vspeed = -1
 		}
 		else if(evt.keyCode == 88 ) {
 			cut()
+		}
+		else if(evt.keyCode == 75 ) {
+			keepDoc()
+		}
+		else if(evt.keyCode == 66 ) {
+			buryDoc()
 		}
 		else {
 			console.log(evt.keyCode)
