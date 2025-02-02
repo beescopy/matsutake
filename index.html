@@ -64,7 +64,7 @@ const game = {
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
 	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3], people: [1, 2], answered: 0},
-	ending: { 
+	ending: {
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
 			"bury-g08", "bury-g02", "bury-g01", "bury-g01", "bury-g03", "bury-g09",
@@ -195,7 +195,8 @@ function init(){
     	load("img/txt-build-01.png", "build-g1"),
     	load("img/txt-build-02.png", "build-g2"),
     	load("img/txt-build-03.png", "build-g3"),
-    	load("img/txt-build-04.png", "build-g4"),
+        load("img/txt-build-04.png", "build-g4"),
+        load("img/txt-matsutake.png", "matsutake"),
     	load("img/doc-init.png", "doc-00"),
         load("img/doc-01.png", "doc-01"),
         load("img/doc-02.png", "doc-02"),
@@ -281,6 +282,9 @@ function tick() {
     else if (game.currentView == "build") {
         drawBuild(deltaTime)
     }
+    else if (game.currentView == "ended") {
+        drawEnded(deltaTime)
+    }
     else {
         drawEnding(deltaTime)
     }
@@ -347,6 +351,12 @@ function drawBurn(deltaTime) {
 	ctx.globalAlpha = 1
 }
 
+function drawEnded(deltaTime) {
+	if(!game.spritesLoaded)
+		return
+    ctx.globalAlpha = 1
+    drawScaled(ctx, game.img["matsutake"], 0, 0)
+}
 
 function drawBury(deltaTime) {
 	if(!game.spritesLoaded)
@@ -461,8 +471,9 @@ function slideAndGetNewDoc(slideXOffset) {
         window.setTimeout(function(){ game.bury.choseDocs = true }, timeSlideOut+delay)
     window.setTimeout(function(){ game.bury.docXOffset = 0 }, timeSlideOut+delay)
     window.setTimeout(function(){ game.bury.docYOffset = 125 }, timeSlideOut+delay)
-    if (game.bury.interactionCounter == 13) {
+    if (game.bury.interactionCounter >= 13 && game.bury.interactionCounter < 100) {
         startBuild()
+        game.bury.interactionCounter = 111
         return
     }
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({docYOffset:0}, timeSlideIn, createjs.Ease.cubicInOut)) }, timeSlideOut+delay)
@@ -629,7 +640,7 @@ function startEnding(){
 	say("ending")
     game.currentView = "ending"
     delay = 8000
-    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.ending).to({opacity: 0}, 10000, createjs.Ease.cubicOut)) }, delay)
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.ending).to({opacity: 0}, 6000, createjs.Ease.cubicOut)) }, delay)
     window.setTimeout(function(){ game.music.volume = 0.9}, delay + 1000)
     window.setTimeout(function(){ game.music.volume = 0.8}, delay + 2000)
     window.setTimeout(function(){ game.music.volume = 0.7}, delay + 3000)
@@ -637,6 +648,7 @@ function startEnding(){
     window.setTimeout(function(){ game.music.volume = 0.5}, delay + 5000)
     window.setTimeout(function(){ game.music.volume = 0.2}, delay + 6000)
     window.setTimeout(function(){ game.music.volume = 0},   delay + 7000)
+    window.setTimeout(function(){ game.currentView = "ended" },   delay + 6000)
 }
 
 function firstmove() {
