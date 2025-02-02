@@ -63,7 +63,7 @@ const game = {
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
 	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3], people: [1], answered: 0},
-	ending: { 
+	ending: {
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
 			"bury-g08", "bury-g02", "bury-g01", "bury-g01", "bury-g03", "bury-g09",
@@ -418,6 +418,9 @@ function keepDoc() {
 
 function buryDoc() {
     slideAndGetNewDoc(-250)
+    var myAudio = new Audio(`aud/crunch.mp3`);
+    myAudio.volume = 0.3;
+	myAudio.play();
 }
 
 function handoutDoc() {
@@ -430,8 +433,8 @@ function handoutDoc() {
 		createjs.Tween.get(game.build).wait(500).to({questionPos:-125}, 2000, createjs.Ease.cubicIn).call(function(){
 			game.build.question = randomDraw(game.build.questions)
 			game.build.person = randomDraw(game.build.people)
-		}).wait(2000).to({questionPos:0}, 2000, createjs.Ease.cubicOut).call(function(){ 
-		game.build.animateDoc = -1 
+		}).wait(2000).to({questionPos:0}, 2000, createjs.Ease.cubicOut).call(function(){
+		game.build.animateDoc = -1
 		if(game.build.answered > 2)
 			startEnding()
 	}))
@@ -509,7 +512,7 @@ function drawBuild(deltaTime) {
 			const secondFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + game.build.chosenDocs.length - 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
 			drawScaled(ctx, secondFan, mainDocRight - secondFan.width + 30, fanX + 16)
 		}
-		
+
 		drawScaled(ctx, mainDoc, mainDocLeft, fanX)
 	}
 
