@@ -421,6 +421,8 @@ function buryDoc() {
 }
 
 function handoutDoc() {
+	game.build.answered += 1
+
 	game.build.animateDoc = game.build.chosenDocs.splice(game.build.fanIdx, 1)
 	game.build.fanIdx = Math.max(game.build.fanIdx - 1, 0)
 	game.build.animateDocY = 58
@@ -434,13 +436,11 @@ function handoutDoc() {
 				game.tweens.push(createjs.Tween.get(game.build).wait(500).to({fanPos: 125}, 1750, createjs.Ease.cubicIn))
 			}
 
-		}).wait(2000).to({questionPos: game.build.answered > 2 ? -125 : 0 }, 2000, createjs.Ease.cubicOut).call(function(){ 
+		}).wait(2000).to({questionPos: game.build.answered > 2 ? -125 : 0 }, 1700, createjs.Ease.cubicIn).call(function(){ 
 		game.build.animateDoc = -1 
 		if(game.build.answered > 2)
 			startEnding()
 	}))
-
-	game.build.answered += 1
 }
 
 function slideAndGetNewDoc(slideXOffset) {
