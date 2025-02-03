@@ -15,7 +15,6 @@
 body, html{
 	margin: 0;
 	padding: 0;
-	perspective: 2000px;
 	height: 100%;
 	width: 100%;
 }
@@ -63,7 +62,7 @@ const game = {
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
-	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -125, person: 0, question: 0, questions: [1, 2, 3, 4,5,6], people: [1, 2, 3], answered: 0, giveOpacity: 0},
+	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -100, person: 0, question: 0, questions: [1, 2, 3, 4,5,6], people: [1, 2, 3], answered: 0, giveOpacity: 0},
 	ending: {
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
@@ -457,14 +456,14 @@ function handoutDoc() {
 	game.tweens.push(createjs.Tween.get(game.build).to({animateDocY:-125}, 1000, createjs.Ease.cubicIn))
 	game.tweens.push(createjs.Tween.get(game.build).wait(1300).to({personX:-125}, 2000, createjs.Ease.cubicIn).wait(750).to({personX:0}, 2000, createjs.Ease.cubicOut))
 	game.tweens.push(
-		createjs.Tween.get(game.build).wait(500).to({questionPos:-125}, 2000, createjs.Ease.cubicIn).wait(500).call(function(){
+		createjs.Tween.get(game.build).wait(500).to({questionPos:-100}, 2000, createjs.Ease.cubicIn).wait(500).call(function(){
 			game.build.question = randomDraw(game.build.questions)
 			game.build.person = randomDraw(game.build.people)
 			if(game.build.answered > 2) {
 				game.tweens.push(createjs.Tween.get(game.build).wait(500).to({fanPos: 125}, 1750, createjs.Ease.cubicIn))
 			}
 
-		}).wait(2000).to({questionPos: game.build.answered > 2 ? -125 : 0 }, 1700, createjs.Ease.cubicIn).call(function(){
+		}).wait(2000).to({questionPos: game.build.answered > 2 ? -100 : 16 }, 1700, createjs.Ease.cubicIn).call(function(){
 		game.build.animateDoc = -1
 		if(game.build.answered > 2 && game.currentView != "ending")
 			startEnding()
@@ -514,13 +513,13 @@ function drawBuild(deltaTime) {
 		drawScaled(ctx, game.img["lantern1"], 0, 0)
 		drawScaled(ctx, game.img[`p${game.build.person}1`], game.build.personX, 0)
 		drawScaled(ctx, game.img["door1"], 0, 0)
-		drawScaled(ctx, game.img[`q${game.build.question}`], 0, game.build.questionPos)
+		drawScaled(ctx, game.img[`q${game.build.question}`], 133, game.build.questionPos)
 	}
 	else {
 		drawScaled(ctx, game.img["lantern2"], 0, 0)
 		drawScaled(ctx, game.img[`p${game.build.person}2`], game.build.personX, 0)
 		drawScaled(ctx, game.img["door2"], 0, 0)
-		drawScaled(ctx, game.img[`q${game.build.question}`], 0, game.build.questionPos-1)
+		drawScaled(ctx, game.img[`q${game.build.question}`], 133, game.build.questionPos-1)
 	}
 
 	ctx.globalAlpha = 0.5 * game.build.opacity;
@@ -558,7 +557,7 @@ function drawBuild(deltaTime) {
 	}
 
 	ctx.globalAlpha =  game.build.giveOpacity * game.build.opacity;
-	drawScaled(ctx, game.controls.isTouch ? game.img["tut-give-swipe"] : game.img["tut-give-up"], 0, 0)
+	drawScaled(ctx, game.controls.isTouch ? game.img["tut-give-swipe"] : game.img["tut-give-up"], 133, 51)
 	ctx.globalAlpha =  game.build.opacity;
 
 	if(!game.build.showBuild)
@@ -653,7 +652,7 @@ function startBuild(){
     window.setTimeout(function(){ say("build") }, 3300)
     window.setTimeout(function(){ game.currentView = "build" }, 2500)
     game.tweens.push(createjs.Tween.get(game.build).wait(11000).to({fanPos: 58}, 3000, createjs.Ease.cubicOut))
-    game.tweens.push(createjs.Tween.get(game.build).wait(11000).to({questionPos: 0, giveOpacity: 1}, 3000, createjs.Ease.cubicOut))
+    game.tweens.push(createjs.Tween.get(game.build).wait(11000).to({questionPos: 16, giveOpacity: 0.5}, 3000, createjs.Ease.cubicOut))
     window.setTimeout(function(){ game.build.showBuild = false }, 10000)
 
 }
@@ -661,8 +660,8 @@ function startBuild(){
 function startEnding(){
 	say("ending")
     game.currentView = "ending"
-    delay = 8000
-    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.ending).to({opacity: 0}, 6000, createjs.Ease.cubicOut)) }, delay)
+    delay = 9000
+    window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.ending).to({opacity: 0}, 6000, createjs.Ease.cubicIn)) }, delay)
     window.setTimeout(function(){ game.currentView = "ended" }, delay + 6000)
     window.setTimeout(function(){ game.music.volume = 0.9},     delay + 7000)
     window.setTimeout(function(){ game.music.volume = 0.8},     delay + 8000)
