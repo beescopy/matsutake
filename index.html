@@ -663,14 +663,14 @@ function startEnding(){
     game.currentView = "ending"
     delay = 8000
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.ending).to({opacity: 0}, 6000, createjs.Ease.cubicOut)) }, delay)
-    window.setTimeout(function(){ game.music.volume = 0.9}, delay + 1000)
-    window.setTimeout(function(){ game.music.volume = 0.8}, delay + 2000)
-    window.setTimeout(function(){ game.music.volume = 0.7}, delay + 3000)
-    window.setTimeout(function(){ game.music.volume = 0.6}, delay + 4000)
-    window.setTimeout(function(){ game.music.volume = 0.5}, delay + 5000)
-    window.setTimeout(function(){ game.music.volume = 0.2}, delay + 6000)
-    window.setTimeout(function(){ game.music.volume = 0},   delay + 7000)
-    window.setTimeout(function(){ game.currentView = "ended" },   delay + 6000)
+    window.setTimeout(function(){ game.currentView = "ended" }, delay + 6000)
+    window.setTimeout(function(){ game.music.volume = 0.9},     delay + 7000)
+    window.setTimeout(function(){ game.music.volume = 0.8},     delay + 8000)
+    window.setTimeout(function(){ game.music.volume = 0.7},     delay + 9000)
+    window.setTimeout(function(){ game.music.volume = 0.6},     delay +10000)
+    window.setTimeout(function(){ game.music.volume = 0.5},     delay +11000)
+    window.setTimeout(function(){ game.music.volume = 0.2},     delay +12000)
+    window.setTimeout(function(){ game.music.volume = 0},       delay +13000)
 }
 
 function firstmove() {
