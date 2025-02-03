@@ -531,12 +531,17 @@ function drawBuild(deltaTime) {
 		return
 	}
 
+	// draw document fan only if we have documents left
 	if(game.build.chosenDocs.length > 0) {
-		const fanX = game.build.fanPos
+		
 		const fanIdx = game.build.fanIdx
 		const mainDoc = game.img[`doc-${String(game.build.chosenDocs[fanIdx]).padStart(2, "0")}-s`]
 		const mainDocLeft = Math.round((250 - mainDoc.width)/2)
 		const mainDocRight = mainDocLeft + mainDoc.width
+
+		// we want to center the main document in the space below fanPos if it is smaller than the entire space
+		const remainingSpace = canvas.height - game.build.fanPos
+		const fanX = Math.max(game.build.fanPos, game.build.fanPos + Math.round((remainingSpace - mainDoc.height)*0.75))
 
 		if(game.build.chosenDocs.length > 1) {
 			const firstFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
@@ -595,12 +600,17 @@ function drawEnding(deltaTime) {
 
 	drawScaled(ctx, game.img[`q${game.build.question}`], 0, game.build.questionPos)
 
+	// draw document fan only if we have documents left
 	if(game.build.chosenDocs.length > 0) {
-		const fanX = game.build.fanPos
+		
 		const fanIdx = game.build.fanIdx
 		const mainDoc = game.img[`doc-${String(game.build.chosenDocs[fanIdx]).padStart(2, "0")}-s`]
 		const mainDocLeft = Math.round((250 - mainDoc.width)/2)
 		const mainDocRight = mainDocLeft + mainDoc.width
+
+		// we want to center the main document in the space below fanPos if it is smaller than the entire space
+		const remainingSpace = canvas.height - game.build.fanPos
+		const fanX = Math.max(game.build.fanPos, game.build.fanPos + Math.round((remainingSpace - mainDoc.height)*0.75))
 
 		if(game.build.chosenDocs.length > 1) {
 			const firstFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
@@ -651,7 +661,7 @@ function startBuild(){
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 2500)
     window.setTimeout(function(){ say("build") }, 3300)
     window.setTimeout(function(){ game.currentView = "build" }, 2500)
-    game.tweens.push(createjs.Tween.get(game.build).wait(11000).to({fanPos: 58}, 3000, createjs.Ease.cubicOut))
+    game.tweens.push(createjs.Tween.get(game.build).wait(11000).to({fanPos: 62}, 3000, createjs.Ease.cubicOut))
     game.tweens.push(createjs.Tween.get(game.build).wait(11000).to({questionPos: 16, giveOpacity: 0.5}, 3000, createjs.Ease.cubicOut))
     window.setTimeout(function(){ game.build.showBuild = false }, 10000)
 
