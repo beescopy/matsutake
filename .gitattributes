@@ -1,2 +1,4 @@
 controls.js linguist-detectable
+controls.js -linguist-vendored
+tween.js linguist-vendored
 zip-the-game.sh -linguist-detectable
