@@ -21,6 +21,7 @@ body, html{
 
 body {
 	background: #000;
+	overflow: hidden;
 }
 
 #c {
@@ -89,6 +90,8 @@ window.addEventListener("load", function() {
 		playGameMusic('aud/burn-bg.mp3', 1)
 		document.getElementById("pressplay").style.display = "none"
 		window.setTimeout(function(){ say("burn") }, 1000)
+		game.tweens.push(createjs.Tween.get(game.burn).wait(300).to({opacity: 1}, 4000, createjs.Ease.cubicOut));
+		game.tweens.push(createjs.Tween.get(game.burn).wait(300).to({y: 0}, 2000, createjs.Ease.cubicOut));
 	})
 })
 
@@ -301,9 +304,6 @@ function tick() {
 }
 
 function spritesLoaded() {
-	game.tweens.push(createjs.Tween.get(game.burn).to({opacity: 1}, 4000, createjs.Ease.cubicOut));
-	game.tweens.push(createjs.Tween.get(game.burn).to({y: 0}, 2000, createjs.Ease.cubicOut));
-
 	game.tweens.push(createjs.Tween.get(game.burn, {loop:true}).to({starCycle: 100}, 1000, createjs.Ease.circInOut).to({starCycle: 70}, 800, createjs.Ease.circInOut));
 }
 
