@@ -30,8 +30,20 @@ class Controls {
 		// short drag is is probably a "click"
 		if(Math.abs(touch.startY - y) < 30 && Math.abs(touch.startX - x) < 30)
 			game.controls.genericTap(x, y);
-		else if(game.currentView == "build" && Math.abs(touch.startX - x) < 70 && touch.startY - y > 60) {
+		else if(game.currentView == "build" && Math.abs(touch.startX - x) < window.innerWidth * 0.1 && touch.startY - y > window.innerHeight * 0.2) {
 			game.controls.pressUp()
+		}
+		else if(touch.startX - x > window.innerWidth * 0.15 && Math.abs(touch.startY - y) < window.innerHeight * 0.10) {
+			if(game.currentView == "build")
+				game.controls.pressRight()
+			else if(game.currentView == "bury")
+				buryDoc()
+		}
+		else if(x - touch.startX > window.innerWidth * 0.15 && Math.abs(touch.startY - y) < window.innerHeight * 0.10) {
+			if(game.currentView == "build")
+				game.controls.pressLeft()
+			else if(game.currentView == "bury")
+				keepDoc()
 		}
 
 		if(game.controls.touchData[id].simKey) {
