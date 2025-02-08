@@ -61,7 +61,7 @@ const game = {
 	spritesLoaded: false,
 	debug: false,
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
-    burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycle: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
+    burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycleA: 70, starCycleB: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
 	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -100, person: 0, question: 0, questions: [1, 2, 3, 4,5,6], people: [1, 2, 3], answered: 0, giveOpacity: 0},
 	ending: {
@@ -87,7 +87,7 @@ window.addEventListener("load", function() {
 
 
 	document.getElementById("pressplay").addEventListener("click", function() {
-		playGameMusic('aud/burn-bg.mp3', 1)
+		playGameMusic('aud/burn-bg.opus', 1)
 		document.getElementById("pressplay").style.display = "none"
 		window.setTimeout(function(){ say("burn") }, 1000)
 		game.tweens.push(createjs.Tween.get(game.burn).wait(300).to({opacity: 1}, 4000, createjs.Ease.cubicOut));
@@ -172,7 +172,8 @@ function init(){
 		load("img/txt-burn-02.png", "burn-g1"),
 		load("img/txt-burn-03.png", "burn-g2"),
 		load("img/txt-burn-04.png", "burn-g3"),
-		load("img/stars.png", "stars"),
+		load("img/stars-a.png", "stars-a"),
+		load("img/stars-b.png", "stars-b"),
 		load("img/hills.png", "hills"),
 		load("img/sky.png", "sky"),
 		load("img/powerline-01.png", "powerline1"),
@@ -304,7 +305,8 @@ function tick() {
 }
 
 function spritesLoaded() {
-	game.tweens.push(createjs.Tween.get(game.burn, {loop:true}).to({starCycle: 100}, 1000, createjs.Ease.circInOut).to({starCycle: 70}, 800, createjs.Ease.circInOut));
+	game.tweens.push(createjs.Tween.get(game.burn, {loop:true}).to({starCycleA: 100}, 1000, createjs.Ease.circInOut).to({starCycleA: 70}, 800, createjs.Ease.circInOut));
+	game.tweens.push(createjs.Tween.get(game.burn, {loop:true}).to({starCycleB: 100}, 1200, createjs.Ease.circInOut).to({starCycleB: 70}, 900, createjs.Ease.circInOut));
 }
 
 function drawBurn(deltaTime) {
@@ -323,8 +325,10 @@ function drawBurn(deltaTime) {
 
 	drawScaled(ctx, game.img["sky"], 0, game.burn.yOffset)
 
-	ctx.globalAlpha = game.burn.starOpacity * (game.burn.starCycle / 100)
-	drawScaled(ctx, game.img["stars"], 0, game.burn.yOffset)
+	ctx.globalAlpha = game.burn.starOpacity * (game.burn.starCycleA / 100)
+	drawScaled(ctx, game.img["stars-a"], 0, game.burn.yOffset)
+	ctx.globalAlpha = game.burn.starOpacity * (game.burn.starCycleB / 100)
+	drawScaled(ctx, game.img["stars-b"], 0, game.burn.yOffset)
 	ctx.globalAlpha = 1
 
     drawScaled(ctx, game.img["hills"], 0, game.burn.yOffset)
@@ -546,6 +550,7 @@ function drawBuild(deltaTime) {
 		if(game.build.chosenDocs.length > 1) {
 			const firstFan = game.img[`doc-${String(game.build.chosenDocs[(fanIdx + 1) % game.build.chosenDocs.length]).padStart(2, "0")}-s`]
 			drawScaled(ctx, firstFan, mainDocLeft - 30, fanX + 16)
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
 		}
 
 		if(game.build.chosenDocs.length > 2) {
@@ -649,14 +654,14 @@ function cut() {
 
 function startBury(){
 	game.build.chosenDocs = []
-    playGameMusic('aud/bury-bg.mp3', 0.7)
+    playGameMusic('aud/bury-bg.opus', 0.7)
     window.setTimeout(function(){ game.currentView = "bury" }, 0)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 0)
     window.setTimeout(function(){ game.bury.glitch = 1 }, 3500)
 }
 
 function startBuild(){
-	playGameMusic('aud/build-bg.mp3', 1)
+	playGameMusic('aud/build-bg.opus', 1)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.bury ).to({opacity: 0}, 2000, createjs.Ease.cubicIn)) }, 1200)
     window.setTimeout(function(){ game.tweens.push(createjs.Tween.get(game.build).to({opacity: 1}, 2000, createjs.Ease.cubicOut)) }, 2500)
     window.setTimeout(function(){ say("build") }, 3300)
@@ -688,7 +693,7 @@ function firstmove() {
 }
 
 function soundEffect(name){
-    var myAudio = new Audio(`aud/${name}.mp3`);
+    var myAudio = new Audio(`aud/${name}.opus`);
     myAudio.volume = 0.3;
     myAudio.play();
 }
@@ -696,7 +701,7 @@ function soundEffect(name){
 function say(line) {
     if (game.voice)
         game.voice.pause()
-    game.voice = new Audio(`aud/${line}-tts.mp3`);
+    game.voice = new Audio(`aud/${line}-tts.opus`);
     game.voice.volume = 0.65;
 	game.voice.play();
 }
