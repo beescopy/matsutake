@@ -63,7 +63,7 @@ const game = {
 	player: { x: 30, y: 105, vspeed: 0, movingLeft: false, movingRight: false },
     burn:  { time: 0, glitch: 0, cut: false, y: 10.5, opacity: 0, starOpacity: 0.3, starCycleA: 70, starCycleB: 70, moveOpacity: 1, cutOpacity: 0, yOffset: 0},
 	bury:  { time: 0, glitch: 0, y: 0, opacity: 0, currentDoc: 0, docs: [1,2,3,4,5,6,7,8,9,10,11,12,13], choseDocs: false, docXOffset: 0, docYOffset: 130, interactionCounter: 0},
-	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 125, questionPos: -100, person: 0, question: 0, questions: [1, 2, 3, 4,5,6], people: [1, 2, 3], answered: 0, giveOpacity: 0},
+	build: { opacity: 0, fanIdx: 0, animateDoc: -1, animateDocY: 58, personX: 0, chosenDocs: [4, 5, 6, 7], showBuild: true, fanPos: 250, questionPos: -100, person: 0, question: 0, questions: [1, 2, 3, 4,5,6], people: [1, 2, 3], answered: 0, giveOpacity: 0},
 	ending: {
 		frames: [
 			"burn", "burn", "burn-g1", "burn", "burn-g2", "burn-g3",
@@ -420,9 +420,15 @@ function drawBury(deltaTime) {
     }
     if(game.bury.showDocs) {
         if(game.bury.choseDocs) {
-            drawScaled(ctx, game.img["doc-"+String(game.bury.currentDoc).padStart(2, '0')], game.bury.docXOffset, game.bury.docYOffset + game.bury.y)
+        	const doc = game.img["doc-"+String(game.bury.currentDoc).padStart(2, '0')]
+        	const centerX = Math.max(54, Math.floor((canvas.width - doc.width)*0.45))
+        	const centerY = doc.height > 50 ? Math.floor((canvas.height - doc.height)*0.70) :  Math.floor((canvas.height - doc.height)*0.55)
+            drawScaled(ctx, doc, game.bury.docXOffset + centerX, game.bury.docYOffset + game.bury.y + centerY)
         } else {
-            drawScaled(ctx, game.img["doc-00"], game.bury.docXOffset,  game.bury.docYOffset + game.bury.y)
+        	const doc = game.img["doc-00"]
+        	const centerX = Math.max(54, Math.floor((canvas.width - doc.width)*0.45))
+        	const centerY = doc.height > 50 ? Math.floor((canvas.height - doc.height)*0.70) :  Math.floor((canvas.height - doc.height)*0.55)
+            drawScaled(ctx, doc, game.bury.docXOffset + centerX,  game.bury.docYOffset + game.bury.y + centerY)
         }
     }
 }
@@ -464,7 +470,7 @@ function handoutDoc() {
 			game.build.question = randomDraw(game.build.questions)
 			game.build.person = randomDraw(game.build.people)
 			if(game.build.answered > 2) {
-				game.tweens.push(createjs.Tween.get(game.build).wait(500).to({fanPos: 125}, 1750, createjs.Ease.cubicIn))
+				game.tweens.push(createjs.Tween.get(game.build).wait(500).to({fanPos: 250}, 1750, createjs.Ease.cubicIn))
 			}
 
 		}).wait(2000).to({questionPos: game.build.answered > 2 ? -100 : 16 }, 1700, createjs.Ease.cubicIn).call(function(){
@@ -477,6 +483,9 @@ function handoutDoc() {
 }
 
 function slideAndGetNewDoc(slideXOffset) {
+	if(game.bury.interactionCounter > 100)
+		return
+
     game.bury.interactionCounter += 1
 
     let timeSlideOut = 666
